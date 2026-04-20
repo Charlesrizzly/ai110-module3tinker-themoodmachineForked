@@ -1,10 +1,10 @@
 # ml_experiments.py
 """
-Simple ML experiments for the Mood Machine lab.
+ML experiments for the Mood Machine lab using the 5-mood system.
 
-This file uses a "real" machine learning library (scikit-learn)
-to train a tiny text classifier on the same SAMPLE_POSTS and
-TRUE_LABELS that you use with the rule based model.
+This file uses scikit-learn to train a text classifier on SAMPLE_POSTS
+and TRUE_LABELS (5-mood system: angry/stressed/sad/bored/happy).
+Compare accuracy with the rule-based model in main.py.
 """
 
 from typing import List, Tuple
@@ -135,5 +135,5 @@ if __name__ == "__main__":
     run_interactive_loop(vectorizer, model)
 
     print("\nTip: Compare these predictions with the rule based model")
-    print("by running `python main.py`. Notice where they fail in")
-    print("similar ways and where they fail in different ways.")
+    print("by running `python main.py`. Both use the 5-mood system:")
+    print("angry, stressed, sad, bored, happy.")

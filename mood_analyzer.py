@@ -11,7 +11,7 @@ This class starts with very simple logic:
 
 from typing import List, Dict, Tuple, Optional
 
-from dataset import POSITIVE_WORDS, NEGATIVE_WORDS
+from dataset import POSITIVE_WORDS, NEGATIVE_WORDS, MOOD_CATEGORIES
 
 
 class MoodAnalyzer:
@@ -160,8 +160,6 @@ class MoodAnalyzer:
         processed_text = self.preprocess(text)
         score = self.score_text(processed_text)[0]
         mixed = self.score_text(processed_text)[1]
-        print(score)
-
         if -0.2 <= score <= 0.2 and mixed:
            return "mixed"
         elif score == 0 and not mixed:
@@ -171,6 +169,38 @@ class MoodAnalyzer:
         if score > 0:
            return "positive"
       
+
+    def detect_specific_mood(self, text: str) -> str:
+        """
+        Classify text into one of: angry, stressed, sad, bored, happy.
+
+        Counts mood-keyword hits from MOOD_CATEGORIES with basic negation
+        handling. Falls back to mapping predict_label() when no keywords match.
+        """
+        tokens = self.preprocess(text)
+        scores = {mood: 0 for mood in MOOD_CATEGORIES}
+        negation_words = {"not", "never", "don't", "dont", "no"}
+
+        for i, token in enumerate(tokens):
+            negated = i > 0 and tokens[i - 1] in negation_words
+            if negated:
+                continue
+            for mood, word_list in MOOD_CATEGORIES.items():
+                if token in word_list:
+                    scores[mood] += 1
+
+        best_mood = max(scores, key=scores.get)
+        if scores[best_mood] == 0:
+            fallback = {
+                "positive": "happy",
+                "negative": "sad",
+                "neutral":  "bored",
+                "mixed":    "stressed",
+            }
+            broad = self.predict_label(text)
+            return fallback.get(broad, "happy")
+
+        return best_mood
 
     # ---------------------------------------------------------------------
     # Explanations (optional but recommended)

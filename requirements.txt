@@ -1,3 +1,5 @@
 scikit-learn
 matplotlib
 ipykernel
+requests
+python-dotenv
